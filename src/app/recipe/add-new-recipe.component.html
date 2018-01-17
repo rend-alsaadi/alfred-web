@@ -1,0 +1,62 @@
+<h2>Add New Recipe</h2>
+<div class="container">
+    <form [formGroup]="addNewRecipeForm" novalidate (ngSubmit)="addRecipe(addNewRecipeForm)">
+        <div class="form-group">
+            <label class="center-block">Recipe Name:
+                <input class="form-control" formControlName="recipeName">
+            </label>
+            <label class="center-block">Servings:
+                <input class="form-control" type="number" formControlName="servings">
+            </label>
+            <label class="center-block">Season:
+                <select class="form-control" formControlName="season">
+                    <option style="display:none" disabled selected value> Select An Option </option>
+                    <option *ngFor="let season of seasons">{{season}}</option>
+                </select>
+            </label>
+            <label for="recipeName" class="center-block">Meal Type:</label>
+            <angular2-multiselect [data]="dropdownList" [(ngModel)]="selectedItems" [settings]="settings" formControlName="mealType">
+            </angular2-multiselect>
+            <!--Ingredients Array-->
+            <div formArrayName="ingredients">
+                <div class="panel panel-default margin-20" *ngFor="let ingredient of addNewRecipeForm.get('ingredients').controls; let i=index">
+                    <div class="panel-heading">
+                        <span>Ingredient {{i + 1}}</span>
+                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="addNewRecipeForm.get('ingredients').length > 1" (click)="removeIngredient(i)">
+                        </span>
+                    </div>
+                    <div class="panel-body" [formGroupName]="i">
+                        <add-ingredient [group]="addNewRecipeForm.controls.ingredients.controls[i]"></add-ingredient>
+                    </div>
+                </div>
+            </div>
+            <div class="margin-20">
+                <a (click)="addIngredient()" style="cursor: default">
+                    Add Another Ingredient +
+                </a>
+            </div>
+            <!--Directions Array-->
+            <div formArrayName="directions">
+                <div class="panel panel-default margin-20" *ngFor="let directions of addNewRecipeForm.get('directions').controls; let i=index">
+                    <div class="panel-heading">
+                        <span>Step {{i + 1}}</span>
+                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="addNewRecipeForm.get('directions').length > 1" (click)="removeDirection(i)">
+                        </span>
+                    </div>
+                    <div class="panel-body" [formGroupName]="i">
+                        <add-direction [group]="addNewRecipeForm.controls.directions.controls[i]"></add-direction>
+                    </div>
+                </div>
+            </div>
+            <div class="margin-20">
+                <a (click)="addDirection()" style="cursor: default">
+                    Add another Step +
+                </a>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right">Add New Recipe</button>
+        </div>
+    </form>
+</div>
+
+<pre>Form value: {{ addNewRecipeForm.value | json }}</pre>
+<pre>Form status: {{ addNewRecipeForm.status | json }}</pre>

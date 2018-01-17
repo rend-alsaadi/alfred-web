@@ -1,0 +1,6 @@
+<div class="container">
+    <input type="text" id="filter-text-box" placeholder="Search For Stuff..." (keyup)="onFilterTextBoxChanged($event)" />
+    <ag-grid-angular style="width: 900px; height: 115px;" class="ag-fresh" [rowData]="rowData" [columnDefs]="columnDefs" [frameworkComponents]="frameworkComponents"
+        [context]="context" (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+</div>
