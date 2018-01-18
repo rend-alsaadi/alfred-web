@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Subscription }   from 'rxjs/Subscription';
 
 import { mealType, seasons } from '../models/recipe-data-model';
 
+//services
 import { InventoryService } from '../services/inventory-services';
 import { RecipeService } from '../services/recipe-service';
+import { DataService } from '../services/data-service';
 
 @Component({
     selector: 'add-new-recipe',
@@ -13,26 +15,23 @@ import { RecipeService } from '../services/recipe-service';
     styleUrls: ['./recipe.component.css'],
     encapsulation: ViewEncapsulation.None
 })
-export class AddNewRecipeComponent implements OnInit {
+export class AddNewRecipeComponent implements OnInit, OnDestroy {
 
     addNewRecipeForm: FormGroup;
     dropdownList = [];
     seasons = [];
     selectedItems = [];
     dropdownSettings = {};
+    subscription: Subscription;
 
     constructor(private formBuilder: FormBuilder,
-        private router: ActivatedRoute,
+        private dataService: DataService,
         private inventoryService: InventoryService,
         private recipeService: RecipeService
     ) { }
 
     ngOnInit() {
-        this.router
-            .queryParams
-            .subscribe(params => {
-                console.log(params);
-            });
+        this.subscription = this.dataService.currentMessage.subscribe(message => console.log(message));
         this.createForm();
         this.dropdownList = mealType;
         this.seasons = seasons;
@@ -104,4 +103,9 @@ export class AddNewRecipeComponent implements OnInit {
         const control = <FormArray>this.addNewRecipeForm.get('directions');
         control.removeAt(i);
     }
+
+    ngOnDestroy() {
+        // prevent memory leak when component destroyed
+        this.subscription.unsubscribe();
+      }
 }

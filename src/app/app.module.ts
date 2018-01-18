@@ -20,6 +20,7 @@ import { RecipeListEditButton } from './recipe/recipelist-edit-button.component'
 //services 
 import { InventoryService } from './services/inventory-services';
 import { RecipeService } from './services/recipe-service';
+import { DataService } from './services/data-service';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { RecipeService } from './services/recipe-service';
   ],
   providers: [
     InventoryService,
-    RecipeService
+    RecipeService,
+    DataService
   ],
   bootstrap: [AppComponent]
 })
