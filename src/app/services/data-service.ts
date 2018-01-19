@@ -5,11 +5,11 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 export class DataService {
 
     private recipeFromRowClick = new BehaviorSubject<Object>({});
-    currentMessage = this.recipeFromRowClick.asObservable();
+    currentRecipe = this.recipeFromRowClick.asObservable();
 
     constructor() { }
 
-    updateRecipe(recipeToEdit: Object) {
-        this.recipeFromRowClick.next(recipeToEdit)
+    updateRecipe(recipeToUpdate: Object) {
+        this.recipeFromRowClick.next(recipeToUpdate)
     }
 }

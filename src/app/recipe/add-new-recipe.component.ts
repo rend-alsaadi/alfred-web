@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { Subscription }   from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Subscription';
+import * as _ from 'lodash'; 
 
 import { mealType, seasons } from '../models/recipe-data-model';
 
@@ -8,6 +9,7 @@ import { mealType, seasons } from '../models/recipe-data-model';
 import { InventoryService } from '../services/inventory-services';
 import { RecipeService } from '../services/recipe-service';
 import { DataService } from '../services/data-service';
+import { isDefined } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
     selector: 'add-new-recipe',
@@ -22,7 +24,8 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
     seasons = [];
     selectedItems = [];
     dropdownSettings = {};
-    subscription: Subscription;
+    recipeSubscription: Subscription;
+    recipe;
 
     constructor(private formBuilder: FormBuilder,
         private dataService: DataService,
@@ -31,11 +34,15 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
-        this.subscription = this.dataService.currentMessage.subscribe(message => console.log(message));
+        this.recipeSubscription = this.dataService.currentRecipe.subscribe(recipeToEdit => {
+            this.recipe = recipeToEdit
+        });
+        console.log(this.recipe);
+        this.selectedItems = [];
         this.createForm();
+        this.loadIngredients(this.recipe.ingredients);
         this.dropdownList = mealType;
         this.seasons = seasons;
-        this.selectedItems = [];
         this.dropdownSettings = {
             singleSelection: false,
             text: "Select Meal Type",
@@ -43,20 +50,16 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
             unSelectAllText: 'UnSelect All',
             enableSearchFilter: false
         };
-
     }
 
     createForm() {
         this.addNewRecipeForm = this.formBuilder.group({
-            recipeName: ['', Validators.required],
-            servings: ['', Validators.required],
-            season: [''],
-            mealType: [[]],
-            ingredients: this.formBuilder.array([
-                this.initIngredients()
-            ]),
-            directions: this.formBuilder.array([
-            ])
+            recipeName: [!_.isEmpty(this.recipe)? this.recipe.recipeName : '', Validators.required],
+            servings: [!_.isEmpty(this.recipe)? this.recipe.servings : '', Validators.required],
+            season: [!_.isEmpty(this.recipe)? this.recipe.season : ''],
+            mealType: [!_.isEmpty(this.recipe)? this.selectedItems = this.recipe.mealType : ''],
+            ingredients: this.formBuilder.array([]),
+            directions: this.formBuilder.array([])
         });
     }
 
@@ -67,17 +70,17 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
         });
     }
 
-    initIngredients() {
+    initIngredients(ingredient?) {
         return this.formBuilder.group({
-            amount: ['', Validators.required],
+            amount: [typeof ingredient !== 'undefined'? ingredient.amount : 'test', Validators.required],
             unit: ['', Validators.required],
             name: ['', Validators.required]
         });
     }
 
-    addIngredient() {
+    addIngredient(ingredient) {
         const control = <FormArray>this.addNewRecipeForm.get('ingredients');
-        const addrCtrl = this.initIngredients();
+        const addrCtrl = this.initIngredients(ingredient);
         control.push(addrCtrl);
     }
 
@@ -104,8 +107,26 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
         control.removeAt(i);
     }
 
+    loadIngredients(ingredientArray) {
+        //this.addIngredient(ingredientArray[0]);
+        _.forEach(ingredientArray, (ingredient) => {
+            this.addIngredient(ingredient);
+        })
+        /*
+        console.log(ingredientArray);
+        ingredientArray.array.forEach(element => {
+            
+        });
+        forEach(ingredientArray, function(ingredient){
+            this.addIngredient(ingredient);
+        })
+        _.forEach(ingredientArray, function (ingredient) {
+        });
+        */
+    }
+
     ngOnDestroy() {
         // prevent memory leak when component destroyed
-        this.subscription.unsubscribe();
-      }
+        this.recipeSubscription.unsubscribe();
+    }
 }

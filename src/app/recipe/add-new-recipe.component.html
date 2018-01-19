@@ -11,7 +11,7 @@
             <label class="center-block">Season:
                 <select class="form-control" formControlName="season">
                     <option style="display:none" disabled selected value> Select An Option </option>
-                    <option *ngFor="let season of seasons">{{season}}</option>
+                    <option *ngFor="let season of seasons" [ngValue]="season">{{season}}</option>
                 </select>
             </label>
             <label for="recipeName" class="center-block">Meal Type:</label>

@@ -24,4 +24,4 @@ export const mealType = [
     { "id": 3, "itemName": "Dinner" }
 ]
 
-export const seasons = ['Winter', 'Fall', 'Spring', 'Summer']
+export const seasons = ['Winter', 'Fall', 'Spring', 'Summer', 'N/A']
