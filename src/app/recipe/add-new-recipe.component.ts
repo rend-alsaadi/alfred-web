@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
-import * as _ from 'lodash'; 
+import * as _ from 'lodash';
 
 import { mealType, seasons } from '../models/recipe-data-model';
 
@@ -38,9 +38,9 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
             this.recipe = recipeToEdit
         });
         console.log(this.recipe);
-        this.selectedItems = [];
         this.createForm();
         this.loadIngredients(this.recipe.ingredients);
+        this.loadDirections(this.recipe.directions)
         this.dropdownList = mealType;
         this.seasons = seasons;
         this.dropdownSettings = {
@@ -53,11 +53,12 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
     }
 
     createForm() {
+        this.selectedItems = [];
         this.addNewRecipeForm = this.formBuilder.group({
-            recipeName: [!_.isEmpty(this.recipe)? this.recipe.recipeName : '', Validators.required],
-            servings: [!_.isEmpty(this.recipe)? this.recipe.servings : '', Validators.required],
-            season: [!_.isEmpty(this.recipe)? this.recipe.season : ''],
-            mealType: [!_.isEmpty(this.recipe)? this.selectedItems = this.recipe.mealType : ''],
+            recipeName: [!_.isEmpty(this.recipe) ? this.recipe.recipeName : '', Validators.required],
+            servings: [!_.isEmpty(this.recipe) ? this.recipe.servings : '', Validators.required],
+            season: [!_.isEmpty(this.recipe) ? this.recipe.season : ''],
+            mealType: [!_.isEmpty(this.recipe) ? this.selectedItems = this.recipe.mealType : ''],
             ingredients: this.formBuilder.array([]),
             directions: this.formBuilder.array([])
         });
@@ -72,10 +73,11 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
 
     initIngredients(ingredient?) {
         return this.formBuilder.group({
-            amount: [typeof ingredient !== 'undefined'? ingredient.amount : 'test', Validators.required],
-            unit: ['', Validators.required],
-            name: ['', Validators.required]
+            amount: [typeof ingredient !== 'undefined' ? ingredient.amount : '', Validators.required],
+            unit: [typeof ingredient !== 'undefined' ? ingredient.unit : '', Validators.required],
+            name: [typeof ingredient !== 'undefined' ? ingredient.name : '', Validators.required]
         });
+
     }
 
     addIngredient(ingredient) {
@@ -89,16 +91,16 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
         control.removeAt(i);
     }
 
-    initDirections() {
+    initDirections(direction?) {
         return this.formBuilder.group({
-            step: [''],
-            direction: ['']
+            step: [typeof direction !== 'undefined' ? direction.step : ''],
+            direction: [typeof direction !== 'undefined' ? direction.instructions : '']
         });
     }
 
-    addDirection() {
+    addDirection(direction) {
         const control = <FormArray>this.addNewRecipeForm.get('directions');
-        const addrCtrl = this.initDirections();
+        const addrCtrl = this.initDirections(direction);
         control.push(addrCtrl);
     }
 
@@ -108,21 +110,24 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
     }
 
     loadIngredients(ingredientArray) {
-        //this.addIngredient(ingredientArray[0]);
         _.forEach(ingredientArray, (ingredient) => {
-            this.addIngredient(ingredient);
-        })
-        /*
-        console.log(ingredientArray);
-        ingredientArray.array.forEach(element => {
-            
+            this.addIngredient({
+                amount: ingredient.amount,
+                //have to format in this way so it can be read by the typeahead
+                name: {
+                    name: ingredient.name
+                },
+                unit: {
+                    name: ingredient.unit
+                }
+            });
         });
-        forEach(ingredientArray, function(ingredient){
-            this.addIngredient(ingredient);
-        })
-        _.forEach(ingredientArray, function (ingredient) {
-        });
-        */
+    }
+
+    loadDirections(directionArray){
+        _.forEach(directionArray, (direction) => {
+            this.addDirection(direction);
+        }); 
     }
 
     ngOnDestroy() {

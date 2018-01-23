@@ -35,7 +35,7 @@ export class AddIngredientComponent {
 
     /**
      * Formatts input and out of t he ng-type-ahead
-     * Doesnt handle straight objects welll
+     * Doesnt handle straight objects well
      */
     formatter = (x: { name: string }) => x.name;
 

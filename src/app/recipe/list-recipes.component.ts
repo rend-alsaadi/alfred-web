@@ -43,7 +43,7 @@ export class ListRecipesComponent implements OnInit {
 
     ngOnInit() {
         this.recipeService.getAllRecipes().subscribe(res => {
-            this.rowData = res[0];
+            this.rowData = res.entities;
         });
     }
 
