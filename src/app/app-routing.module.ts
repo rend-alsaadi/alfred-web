@@ -3,12 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 //import components
 import { ListRecipesComponent } from './recipe/list-recipes.component';
-import { AddNewRecipeComponent } from './recipe/add-new-recipe.component'
+import { RecipeFormComponent } from './recipe/recipe-form.component'
 
 const routes: Routes = [
   { path: '', redirectTo: '/recipes', pathMatch: 'full' },
   { path: 'recipes', component: ListRecipesComponent },
-  { path: 'addNewRecipe', component: AddNewRecipeComponent }
+  { path: 'addNewRecipe', component: RecipeFormComponent }
 ];
 
 @NgModule({

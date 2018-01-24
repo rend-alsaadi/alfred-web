@@ -13,8 +13,8 @@ export class RecipeService {
 
     constructor(private http: Http) { }
 
-    saveNewRecipe(newRecipe: Recipe) {
-        return this.http.post(environment.apiURL + '/recipe', newRecipe).map(res =>  res.json()); 
+    saveRecipe(recipe) {
+        return this.http.post(environment.apiURL + '/recipe', recipe).map(res =>  res.json()); 
     }
 
     getAllRecipes(){

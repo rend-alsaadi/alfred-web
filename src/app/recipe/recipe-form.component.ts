@@ -1,25 +1,26 @@
+//libs
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import * as _ from 'lodash';
 
+//data models
 import { mealType, seasons } from '../models/recipe-data-model';
 
 //services
 import { InventoryService } from '../services/inventory-services';
 import { RecipeService } from '../services/recipe-service';
 import { DataService } from '../services/data-service';
-import { isDefined } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
-    selector: 'add-new-recipe',
-    templateUrl: './add-new-recipe.component.html',
+    selector: 'recipe-form',
+    templateUrl: './recipe-form.component.html',
     styleUrls: ['./recipe.component.css'],
     encapsulation: ViewEncapsulation.None
 })
-export class AddNewRecipeComponent implements OnInit, OnDestroy {
+export class RecipeFormComponent implements OnInit, OnDestroy {
 
-    addNewRecipeForm: FormGroup;
+    recipeForm: FormGroup;
     dropdownList = [];
     seasons = [];
     selectedItems = [];
@@ -54,7 +55,7 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
 
     createForm() {
         this.selectedItems = [];
-        this.addNewRecipeForm = this.formBuilder.group({
+        this.recipeForm = this.formBuilder.group({
             recipeName: [!_.isEmpty(this.recipe) ? this.recipe.recipeName : '', Validators.required],
             servings: [!_.isEmpty(this.recipe) ? this.recipe.servings : '', Validators.required],
             season: [!_.isEmpty(this.recipe) ? this.recipe.season : ''],
@@ -64,10 +65,16 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
         });
     }
 
-    addRecipe(addNewRecipeForm) {
-        console.log(addNewRecipeForm)
-        this.recipeService.saveNewRecipe(addNewRecipeForm.value).subscribe(res => {
+    saveRecipe(recipeForm) {
+        const recipe = {
+            data: recipeForm.value,
+            entityType: 'Recipe',
+            id: !_.isEmpty(this.recipe) ? this.recipe.id : ''
+        }
+        console.log(recipeForm)
+        this.recipeService.saveRecipe(recipe).subscribe(res => {
             console.log(res);
+            //move to next page
         });
     }
 
@@ -81,13 +88,13 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
     }
 
     addIngredient(ingredient) {
-        const control = <FormArray>this.addNewRecipeForm.get('ingredients');
+        const control = <FormArray>this.recipeForm.get('ingredients');
         const addrCtrl = this.initIngredients(ingredient);
         control.push(addrCtrl);
     }
 
     removeIngredient(i: number) {
-        const control = <FormArray>this.addNewRecipeForm.get('ingredients');
+        const control = <FormArray>this.recipeForm.get('ingredients');
         control.removeAt(i);
     }
 
@@ -99,13 +106,13 @@ export class AddNewRecipeComponent implements OnInit, OnDestroy {
     }
 
     addDirection(direction) {
-        const control = <FormArray>this.addNewRecipeForm.get('directions');
+        const control = <FormArray>this.recipeForm.get('directions');
         const addrCtrl = this.initDirections(direction);
         control.push(addrCtrl);
     }
 
     removeDirection(i: number) {
-        const control = <FormArray>this.addNewRecipeForm.get('directions');
+        const control = <FormArray>this.recipeForm.get('directions');
         control.removeAt(i);
     }
 

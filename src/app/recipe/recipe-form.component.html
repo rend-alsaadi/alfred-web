@@ -1,6 +1,6 @@
 <h2>Add New Recipe</h2>
 <div class="container">
-    <form [formGroup]="addNewRecipeForm" novalidate (ngSubmit)="addRecipe(addNewRecipeForm)">
+    <form [formGroup]="recipeForm" novalidate (ngSubmit)="saveRecipe(recipeForm)">
         <div class="form-group">
             <label class="center-block">Recipe Name:
                 <input class="form-control" formControlName="recipeName">
@@ -19,14 +19,14 @@
             </angular2-multiselect>
             <!--Ingredients Array-->
             <div formArrayName="ingredients">
-                <div class="panel panel-default margin-20" *ngFor="let ingredient of addNewRecipeForm.get('ingredients').controls; let i=index">
+                <div class="panel panel-default margin-20" *ngFor="let ingredient of recipeForm.get('ingredients').controls; let i=index">
                     <div class="panel-heading">
                         <span>Ingredient {{i + 1}}</span>
-                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="addNewRecipeForm.get('ingredients').length > 1" (click)="removeIngredient(i)">
+                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="recipeForm.get('ingredients').length > 1" (click)="removeIngredient(i)">
                         </span>
                     </div>
                     <div class="panel-body" [formGroupName]="i">
-                        <add-ingredient [group]="addNewRecipeForm.controls.ingredients.controls[i]"></add-ingredient>
+                        <add-ingredient [group]="recipeForm.controls.ingredients.controls[i]"></add-ingredient>
                     </div>
                 </div>
             </div>
@@ -37,14 +37,14 @@
             </div>
             <!--Directions Array-->
             <div formArrayName="directions">
-                <div class="panel panel-default margin-20" *ngFor="let directions of addNewRecipeForm.get('directions').controls; let i=index">
+                <div class="panel panel-default margin-20" *ngFor="let directions of recipeForm.get('directions').controls; let i=index">
                     <div class="panel-heading">
                         <span>Step {{i + 1}}</span>
-                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="addNewRecipeForm.get('directions').length > 1" (click)="removeDirection(i)">
+                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="recipeForm.get('directions').length > 1" (click)="removeDirection(i)">
                         </span>
                     </div>
                     <div class="panel-body" [formGroupName]="i">
-                        <add-direction [group]="addNewRecipeForm.controls.directions.controls[i]"></add-direction>
+                        <add-direction [group]="recipeForm.controls.directions.controls[i]"></add-direction>
                     </div>
                 </div>
             </div>
@@ -53,10 +53,11 @@
                     Add another Step +
                 </a>
             </div>
-            <button type="submit" class="btn btn-primary pull-right">Add New Recipe</button>
+            <button type="submit" class="btn btn-primary pull-right">Save Recipe</button>
+            <button class="btn btn-danger pull-left">Cancel</button>
         </div>
     </form>
 </div>
 
-<pre>Form value: {{ addNewRecipeForm.value | json }}</pre>
-<pre>Form status: {{ addNewRecipeForm.status | json }}</pre>
+<pre>Form value: {{ recipeForm.value | json }}</pre>
+<pre>Form status: {{ recipeForm.status | json }}</pre>
