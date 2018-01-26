@@ -27,6 +27,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
     dropdownSettings = {};
     recipeSubscription: Subscription;
     recipe;
+    mealTypes = mealType; 
 
     constructor(private formBuilder: FormBuilder,
         private dataService: DataService,

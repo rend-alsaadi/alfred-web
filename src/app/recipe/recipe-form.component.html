@@ -1,62 +1,80 @@
-<h2>Add New Recipe</h2>
 <div class="container">
-    <form [formGroup]="recipeForm" novalidate (ngSubmit)="saveRecipe(recipeForm)">
-        <div class="form-group">
-            <label class="center-block">Recipe Name:
-                <input class="form-control" formControlName="recipeName">
-            </label>
-            <label class="center-block">Servings:
-                <input class="form-control" type="number" formControlName="servings">
-            </label>
-            <label class="center-block">Season:
-                <select class="form-control" formControlName="season">
-                    <option style="display:none" disabled selected value> Select An Option </option>
-                    <option *ngFor="let season of seasons" [ngValue]="season">{{season}}</option>
-                </select>
-            </label>
-            <label for="recipeName" class="center-block">Meal Type:</label>
-            <angular2-multiselect [data]="dropdownList" [(ngModel)]="selectedItems" [settings]="settings" formControlName="mealType">
-            </angular2-multiselect>
-            <!--Ingredients Array-->
-            <div formArrayName="ingredients">
-                <div class="panel panel-default margin-20" *ngFor="let ingredient of recipeForm.get('ingredients').controls; let i=index">
-                    <div class="panel-heading">
-                        <span>Ingredient {{i + 1}}</span>
-                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="recipeForm.get('ingredients').length > 1" (click)="removeIngredient(i)">
-                        </span>
+    <mat-card>
+        <mat-card-title>Add New Recipe</mat-card-title>
+        <mat-card-content>
+            <form [formGroup]="recipeForm" novalidate (ngSubmit)="saveRecipe(recipeForm)">
+                <div>
+                    <mat-form-field class="mat-form-field-override">
+                        <mat-label>Recipe Name</mat-label>
+                        <input matInput placeholder="PB&J" formControlName="recipeName">
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-override">
+                        <mat-label>Servings</mat-label>
+                        <input matInput placeholder="4" type="number" formControlName="servings">
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-override">
+                        <mat-select placeholder="Season" formControlName="season">
+                            <mat-option *ngFor="let season of seasons" [value]="season">
+                                {{ season }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-override">
+                        <mat-select placeholder="Meal Type" formControlName="mealType" multiple>
+                            <mat-option *ngFor="let mealType of mealTypes" [value]="mealType">{{mealType.itemName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!--Ingredients Array-->
+                    <mat-accordion>
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>Ingredients</mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div formArrayName="ingredients">
+                                <mat-card *ngFor="let ingredient of recipeForm.get('ingredients').controls; let i=index">
+                                    <mat-card-subtitle>
+                                        <span>Ingredient {{i + 1}}</span>
+                                        <button type="button" mat-icon-button>
+                                            <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+                                        </button>
+                                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="recipeForm.get('ingredients').length > 1" (click)="removeIngredient(i)"></span>
+                                    </mat-card-subtitle>
+                                    <mat-card-content [formGroupName]="i">
+                                        <add-ingredient [group]="recipeForm.controls.ingredients.controls[i]"></add-ingredient>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                            <button type="button" mat-raised-button color="primary" (click)="addIngredient()">Add Another Ingredient +</button>
+                            <div class="margin-20">
+                                <a (click)="addIngredient()" style="cursor: default">
+                                    Add Another Ingredient +
+                                </a>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                    <!--Directions Array-->
+                    <div formArrayName="directions">
+                        <div class="panel panel-default margin-20" *ngFor="let directions of recipeForm.get('directions').controls; let i=index">
+                            <div class="panel-heading">
+                                <span>Step {{i + 1}}</span>
+                                <span class="glyphicon glyphicon-remove pull-right" *ngIf="recipeForm.get('directions').length > 1" (click)="removeDirection(i)"></span>
+                            </div>
+                            <div class="panel-body" [formGroupName]="i">
+                                <add-direction [group]="recipeForm.controls.directions.controls[i]"></add-direction>
+                            </div>
+                        </div>
                     </div>
-                    <div class="panel-body" [formGroupName]="i">
-                        <add-ingredient [group]="recipeForm.controls.ingredients.controls[i]"></add-ingredient>
+                    <div class="margin-20">
+                        <a (click)="addDirection()" style="cursor: default">
+                            Add another Step +
+                        </a>
                     </div>
+                    <button type="submit" class="btn btn-primary pull-right">Save Recipe</button>
+                    <button class="btn btn-danger pull-left">Cancel</button>
                 </div>
-            </div>
-            <div class="margin-20">
-                <a (click)="addIngredient()" style="cursor: default">
-                    Add Another Ingredient +
-                </a>
-            </div>
-            <!--Directions Array-->
-            <div formArrayName="directions">
-                <div class="panel panel-default margin-20" *ngFor="let directions of recipeForm.get('directions').controls; let i=index">
-                    <div class="panel-heading">
-                        <span>Step {{i + 1}}</span>
-                        <span class="glyphicon glyphicon-remove pull-right" *ngIf="recipeForm.get('directions').length > 1" (click)="removeDirection(i)">
-                        </span>
-                    </div>
-                    <div class="panel-body" [formGroupName]="i">
-                        <add-direction [group]="recipeForm.controls.directions.controls[i]"></add-direction>
-                    </div>
-                </div>
-            </div>
-            <div class="margin-20">
-                <a (click)="addDirection()" style="cursor: default">
-                    Add another Step +
-                </a>
-            </div>
-            <button type="submit" class="btn btn-primary pull-right">Save Recipe</button>
-            <button class="btn btn-danger pull-left">Cancel</button>
-        </div>
-    </form>
+            </form>
+        </mat-card-content>
+    </mat-card>
 </div>
 
 <pre>Form value: {{ recipeForm.value | json }}</pre>
